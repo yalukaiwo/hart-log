@@ -3,30 +3,56 @@ import dynamic from "next/dynamic";
 
 import Header from "@/components/Header";
 import LogFileDrawer from "@/components/LogFileDrawer";
-import useLogStore from "@/lib/store/LogStore";
-import useGpsStore from "@/lib/store/GpsStore";
+import useLogGpsStore from "@/lib/store/LogGpsStore";
 import { truncateFilename } from "@/lib/utils";
 import DataSelect from "@/components/DataSelect";
+import LogChart from "@/components/LogChart";
+import useWindowDimensions from "@/lib/hooks/useWindowDimensions";
+import { useEffect, useState } from "react";
 const TrackMap = dynamic(() => import("@/components/TrackMap"), {
   ssr: false,
 });
 
 export default function Home() {
-  const logFilename = useLogStore((state) => state.filename);
-  const gpsFilename = useGpsStore((state) => state.filename);
+  const { width, height } = useWindowDimensions();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const gpsKeys = useGpsStore((state) => state.keys);
+  const logFilename = useLogGpsStore((state) => state.logFilename);
+  const gpsFilename = useLogGpsStore((state) => state.gpsFilename);
+
+  const gpsKeys = useLogGpsStore((state) => state.gpsKeys);
 
   const isValidGps: boolean =
     gpsKeys.includes("Longitude") && gpsKeys.includes("Latitude");
 
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (width < 1200 || height < 650) {
+    return (
+      <div className="w-screen text-center flex-col h-screen font-mono text-3xl flex items-center justify-center font-bold">
+        Screen too small
+        <p className="text-center text-xl font-sans font-normal mt-5">
+          To use the telemetry visualizer select a bigger device
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full grid grid-rows-[auto_1fr] text-slate-950 max-h-screen">
       <Header />
-      <main className="flex">
+      <main className="flex gap-4">
         <div className="min-w-96 max-w-96 grid grid-rows-[auto_1fr_250px]">
           <div className="px-4 mt-4">
-            <h4 className="font-bold font-sans text-sm">Imported log files:</h4>
+            <h4 className="font-bold font-sans text-sm">
+              Imported telemetry files:
+            </h4>
             <div className="mt-1.5">
               <p className="text-sm font-semibold font-sans">
                 ECU:{" "}
@@ -47,7 +73,7 @@ export default function Home() {
             <h4 className="font-sans text-sm font-bold px-4">Select data</h4>
             {!logFilename && !gpsFilename ? (
               <div className="font-mono text-sm grow w-full text-center mt-1.5">
-                No logs imported
+                No files imported
               </div>
             ) : (
               <DataSelect />
@@ -63,7 +89,9 @@ export default function Home() {
             )}
           </div>
         </div>
-        <div className="bg-blue-900 h-full w-full">EKA</div>
+        <div className="h-full w-full p-4 box-border grid grid-rows-[1fr_250px]">
+          <LogChart />
+        </div>
       </main>
     </div>
   );

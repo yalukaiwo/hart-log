@@ -64,3 +64,19 @@ export function truncateFilename(filename: string, maxLength: number): string {
 export function isNumber(str) {
   return /^[+-]?\d+(\.\d+)?$/.test(str);
 }
+
+export function convertFlatValuesToNumbers(
+  obj: Record<string, string | number>
+): Record<string, string | number> {
+  const result: Record<string, string | number> = {};
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === "string" && !isNaN(Number(value))) {
+      result[key] = Number(value);
+    } else {
+      result[key] = value;
+    }
+  }
+
+  return result;
+}

@@ -20,11 +20,13 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  Toaster,
 } from "./common";
-import useLogStore, { ILogData, ILogStore } from "@/lib/store/LogStore";
-import useGpsStore, { IGpsData, IGpsStore } from "@/lib/store/GpsStore";
+import useLogGpsStore, { ILogData, IGpsData } from "@/lib/store/LogGpsStore";
 import Papa from "papaparse";
 import FileInput from "./FileInput";
+import useDisplayDataStore from "@/lib/store/DisplayDataStore";
+import { useToast } from "@/lib/hooks";
 
 function parseCSV<T extends object>(
   file: File,
@@ -50,16 +52,19 @@ function parseCSV<T extends object>(
 
 const LogFileDrawer = () => {
   const {
-    updateFilename: updateLogFilename,
-    updateData: updateLogData,
-    updateKeys: updateLogKeys,
-  } = useLogStore<ILogStore>((state) => state);
+    updateLogFilename,
+    updateLogData,
+    updateLogKeys,
+    updateGpsFilename,
+    updateGpsData,
+    updateGpsKeys,
+    clearData,
+    formatData,
+  } = useLogGpsStore((state) => state);
 
-  const {
-    updateFilename: updateGpsFilename,
-    updateData: updateGpsData,
-    updateKeys: updateGpsKeys,
-  } = useGpsStore<IGpsStore>((state) => state);
+  const { toast } = useToast();
+
+  const clearSelection = useDisplayDataStore((state) => state.clearSelection);
 
   const [logFilename, setLogFilename] = useState<string | undefined>(undefined);
   const [logData, setLogData] = useState<ILogData[]>([]);
@@ -101,6 +106,22 @@ const LogFileDrawer = () => {
 
   const handleSave = useMemo<MouseEventHandler<HTMLButtonElement>>(
     () => () => {
+      if (
+        !gpsKeys.includes("Longitude") ||
+        !gpsKeys.includes("Latitude") ||
+        !gpsKeys.includes("UTC Time")
+      )
+        return toast({
+          title: "Error",
+          description:
+            'The GPS file MUST contain following properties: "Latitude", "Longitude", "UTC Time"',
+          variant: "error",
+          duration: 3000,
+        });
+
+      clearSelection();
+      clearData();
+
       updateGpsFilename(gpsFilename);
       updateGpsData(gpsData);
       updateGpsKeys(gpsKeys);
@@ -108,6 +129,8 @@ const LogFileDrawer = () => {
       updateLogFilename(logFilename);
       updateLogData(logData);
       updateLogKeys(logKeys);
+
+      formatData();
 
       setGpsFilename(undefined);
       setLogFilename(undefined);
@@ -117,12 +140,16 @@ const LogFileDrawer = () => {
       setGpsKeys([]);
     },
     [
+      clearData,
+      clearSelection,
+      formatData,
       gpsData,
       gpsFilename,
       gpsKeys,
       logData,
       logFilename,
       logKeys,
+      toast,
       updateGpsData,
       updateGpsFilename,
       updateGpsKeys,
@@ -145,65 +172,70 @@ const LogFileDrawer = () => {
   );
 
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button
-          variant="secondary"
-          className="font-sans text-sm cursor-pointer w-full"
-        >
-          Import new
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent className="sm:max-w-lg">
-        <DrawerHeader>
-          <DrawerTitle className="font-sans">
-            Import files to visualize
-          </DrawerTitle>
-          <DrawerDescription className="mt-1 text-sm font-sans">
-            Logs from these files will be parsed and visualized. First log is
-            assumed to have started at the same instant.
-          </DrawerDescription>
-        </DrawerHeader>
-        <DrawerBody>
-          <FileInput
-            id="logFileInput"
-            label="Upload the ECU log file"
-            handleChange={handleLogFileChange}
-            className="mb-4"
-            accept=".csv, .MaxxECU-Log"
-            note="Accepted file types: .CSV, .MaxxECU-Log"
-          />
-          <FileInput
-            id="gpsFileInput"
-            label="Upload the GPS log file"
-            handleChange={handleGpsFileChange}
-            accept=".csv"
-            note="Accepted file types: .CSV"
-          />
-        </DrawerBody>
-        <DrawerFooter className="mt-6">
-          <DrawerClose asChild>
-            <Button
-              className="mt-2 w-full sm:mt-0 sm:w-fit font-sans cursor-pointer"
-              variant="secondary"
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-          </DrawerClose>
-          <DrawerClose asChild>
-            <Button
-              type="submit"
-              disabled={logFilename === undefined && gpsFilename === undefined}
-              className="w-full sm:w-fit font-sans cursor-pointer"
-              onClick={handleSave}
-            >
-              Save
-            </Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+    <>
+      <Drawer>
+        <DrawerTrigger asChild>
+          <Button
+            variant="secondary"
+            className="font-sans text-sm cursor-pointer w-full"
+          >
+            Import new
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent className="sm:max-w-lg">
+          <DrawerHeader>
+            <DrawerTitle className="font-sans">
+              Import files to visualize
+            </DrawerTitle>
+            <DrawerDescription className="mt-1 text-sm font-sans">
+              Telemetry logs from these files will be parsed and visualized.
+              First log is assumed to have started at the same instant.
+            </DrawerDescription>
+          </DrawerHeader>
+          <DrawerBody>
+            <FileInput
+              id="logFileInput"
+              label="Upload the ECU log file"
+              handleChange={handleLogFileChange}
+              className="mb-4"
+              accept=".csv, .MaxxECU-Log"
+              note="Accepted file types: .CSV, .MaxxECU-Log"
+            />
+            <FileInput
+              id="gpsFileInput"
+              label="Upload the GPS log file"
+              handleChange={handleGpsFileChange}
+              accept=".csv"
+              note="Accepted file types: .CSV"
+            />
+          </DrawerBody>
+          <DrawerFooter className="mt-6">
+            <DrawerClose asChild>
+              <Button
+                className="mt-2 w-full sm:mt-0 sm:w-fit font-sans cursor-pointer"
+                variant="secondary"
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+            </DrawerClose>
+            <DrawerClose asChild>
+              <Button
+                type="submit"
+                disabled={
+                  logFilename === undefined || gpsFilename === undefined
+                }
+                className="w-full sm:w-fit font-sans cursor-pointer"
+                onClick={handleSave}
+              >
+                Import
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+      <Toaster />
+    </>
   );
 };
 

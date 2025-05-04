@@ -1,15 +1,16 @@
 import { create } from "zustand";
-import { IGpsData } from "./GpsStore";
-import { ILogData } from "./LogStore";
+import { ILogData, IGpsData } from "./LogGpsStore";
 
 export interface IDisplayDataStore {
   selectedGPS: (keyof IGpsData)[];
   selectedLog: (keyof ILogData)[];
+  allSelected: string[];
 
   addGps(data: keyof IGpsData): void;
   removeGps(data: keyof IGpsData): void;
   addLog(data: keyof ILogData): void;
   removeLog(data: keyof ILogData): void;
+  clearSelection(): void;
 }
 
 function handleAddGps(
@@ -18,7 +19,10 @@ function handleAddGps(
 ): Partial<IDisplayDataStore> {
   if (prevState.selectedGPS.includes(newData)) return {};
 
-  return { selectedGPS: [...prevState.selectedGPS, newData] };
+  return {
+    selectedGPS: [...prevState.selectedGPS, newData],
+    allSelected: [...prevState.allSelected, newData.toString()],
+  };
 }
 
 function handleAddLog(
@@ -27,7 +31,10 @@ function handleAddLog(
 ): Partial<IDisplayDataStore> {
   if (prevState.selectedLog.includes(newData)) return {};
 
-  return { selectedLog: [...prevState.selectedLog, newData] };
+  return {
+    selectedLog: [...prevState.selectedLog, newData],
+    allSelected: [...prevState.allSelected, newData.toString()],
+  };
 }
 
 function handleRemoveGps(
@@ -36,6 +43,9 @@ function handleRemoveGps(
 ): Partial<IDisplayDataStore> {
   return {
     selectedGPS: [...prevState.selectedGPS.filter((el) => el !== remData)],
+    allSelected: [
+      ...prevState.allSelected.filter((el) => el !== remData.toString()),
+    ],
   };
 }
 
@@ -45,12 +55,16 @@ function handleRemoveLog(
 ): Partial<IDisplayDataStore> {
   return {
     selectedLog: [...prevState.selectedLog.filter((el) => el !== remData)],
+    allSelected: [
+      ...prevState.allSelected.filter((el) => el !== remData.toString()),
+    ],
   };
 }
 
 const useDisplayDataStore = create<IDisplayDataStore>((set) => ({
   selectedGPS: [],
   selectedLog: [],
+  allSelected: [],
 
   addGps: (data) => {
     set((prev) => handleAddGps(prev, data));
@@ -63,6 +77,9 @@ const useDisplayDataStore = create<IDisplayDataStore>((set) => ({
   },
   removeLog: (data) => {
     set((prev) => handleRemoveLog(prev, data));
+  },
+  clearSelection: () => {
+    set(() => ({ selectedGPS: [], selectedLog: [], allSelected: [] }));
   },
 }));
 

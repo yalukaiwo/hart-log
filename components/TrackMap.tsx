@@ -2,7 +2,7 @@
 
 import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import chroma from "chroma-js";
-import useGpsStore from "@/lib/store/GpsStore";
+import useLogGpsStore from "@/lib/store/LogGpsStore";
 import { useMemo, useState } from "react";
 import {
   Select,
@@ -14,8 +14,8 @@ import {
 import { isNumber } from "@/lib/utils";
 
 const TrackMap = () => {
-  const gpsData = useGpsStore((state) => state.data);
-  const gpsKeys = useGpsStore((state) => state.keys).filter(
+  const gpsData = useLogGpsStore((state) => state.gpsData);
+  const gpsKeys = useLogGpsStore((state) => state.gpsKeys).filter(
     (item) =>
       !["UTC Time", "Longitude", "Latitude"].includes(item.toString()) &&
       isNumber(gpsData[0][item])
@@ -53,7 +53,9 @@ const TrackMap = () => {
     return gpsData.slice(1).map((point, i) => {
       const prev = gpsData[i];
       const color = colorScale(
-        gpsSelectedParam ? Number(point[gpsSelectedParam]) : 1
+        gpsSelectedParam && point[gpsSelectedParam]
+          ? Number(point[gpsSelectedParam])
+          : 1
       ).hex();
 
       return (

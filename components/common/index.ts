@@ -4,3 +4,8 @@ export * from "./Drawer";
 export * from "./Button";
 export * from "./Select";
 export * from "./Checkbox";
+export * from "./LineChart";
+export * from "./Badge";
+export * from "./Toast";
+export * from "./Toaster";
+export * from "./Slider";

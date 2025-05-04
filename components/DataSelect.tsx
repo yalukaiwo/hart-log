@@ -1,16 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import useLogStore from "@/lib/store/LogStore";
+import useLogGpsStore from "@/lib/store/LogGpsStore";
 import DataSelectItem from "./DataSelectItem";
-import useGpsStore from "@/lib/store/GpsStore";
 import useDisplayDataStore, {
   IDisplayDataStore,
 } from "@/lib/store/DisplayDataStore";
-import { ChangeEvent, ChangeEventHandler, useMemo } from "react";
+import { useMemo } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 
 const DataSelect = () => {
-  const logKeys = useLogStore((state) => state.keys);
-  const gpsKeys = useGpsStore((state) => state.keys);
+  const logKeys = useLogGpsStore((state) => state.logKeys);
+  const gpsKeys = useLogGpsStore((state) => state.gpsKeys);
   const { addLog, removeLog, addGps, removeGps } =
     useDisplayDataStore<IDisplayDataStore>((state) => state);
   const gpsKeysFiltered = gpsKeys.filter(
@@ -47,7 +45,7 @@ const DataSelect = () => {
   );
 
   return (
-    <div className="mt-1.5 overflow-y-scroll max-h-[calc(100vh-480px)]">
+    <div className="mt-1.5 overflow-y-scroll max-h-[calc(100vh-484px)]">
       <h5 className="px-4 text-sm font-mono font-semibold text-slate-400">
         ECU
       </h5>
@@ -55,19 +53,19 @@ const DataSelect = () => {
         {logKeys.length > 0 ? (
           logKeys
             .filter((item) => item.toString().length > 0)
-            .map((item) => (
+            .map((item, i) => (
               <DataSelectItem
                 checkChangeHandler={(checked: CheckedState) => {
                   handleLogCheckChange(checked, item.toString());
                 }}
                 id={item.toString()}
-                key={item.toString()}
+                key={item.toString() + i}
                 label={item.toString()}
               />
             ))
         ) : (
           <div className="font-mono text-sm w-full text-center mt-1.5 text-slate-700">
-            Log file empty or unimported
+            File empty or unimported
           </div>
         )}
       </div>
@@ -78,21 +76,19 @@ const DataSelect = () => {
         {gpsKeysFiltered.length > 0 ? (
           gpsKeysFiltered
             .filter((item) => item.toString().length > 0)
-            .map((item) => (
+            .map((item, i) => (
               <DataSelectItem
                 checkChangeHandler={(checked: CheckedState) => {
                   handleGpsCheckChange(checked, item.toString());
                 }}
                 id={item.toString()}
-                key={item.toString()}
+                key={item.toString() + i}
                 label={item.toString()}
               />
             ))
         ) : (
           <div className="font-mono text-sm w-full text-center mt-1.5 mb-4 text-slate-700">
-            {gpsKeys.length > 0
-              ? "Log file processed"
-              : "Log file empty or unimported"}
+            {gpsKeys.length > 0 ? "File processed" : "File empty or unimported"}
           </div>
         )}
       </div>
