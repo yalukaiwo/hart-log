@@ -83,13 +83,13 @@ export default function Home() {
             {isValidGps ? (
               <TrackMap />
             ) : (
-              <div className="bg-slate-100 font-semibold font-mono text-sm h-full w-full flex items-center justify-center">
+              <div className="bg-slate-100 font-mono text-sm h-full w-full flex items-center justify-center">
                 GPS data invalid or unavailable
               </div>
             )}
           </div>
         </div>
-        <div className="h-full w-full p-4 box-border grid grid-rows-[1fr_250px]">
+        <div className="h-full w-full p-4 box-border grid grid-rows-[1fr_200px]">
           <LogChart />
         </div>
       </main>

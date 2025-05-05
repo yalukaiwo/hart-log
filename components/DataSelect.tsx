@@ -45,7 +45,7 @@ const DataSelect = () => {
   );
 
   return (
-    <div className="mt-1.5 overflow-y-scroll max-h-[calc(100vh-484px)]">
+    <div className="mt-1.5 overflow-y-scroll max-h-[calc(100vh-480px)]">
       <h5 className="px-4 text-sm font-mono font-semibold text-slate-400">
         ECU
       </h5>

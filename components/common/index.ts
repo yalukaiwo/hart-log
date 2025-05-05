@@ -9,3 +9,4 @@ export * from "./Badge";
 export * from "./Toast";
 export * from "./Toaster";
 export * from "./Slider";
+export * from "./Card";
