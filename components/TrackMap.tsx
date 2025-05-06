@@ -54,8 +54,6 @@ const TrackMap = () => {
   const markerOn = useDisplayDataStore((state) => state.markerOn);
   const setMarkerOn = useDisplayDataStore((state) => state.setMarkerOn);
 
-  const { resolvedTheme } = useTheme();
-
   useEffect(() => {
     if (!markerOn && markerPosition) {
       setMarkerPosition(null);
