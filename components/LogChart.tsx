@@ -169,13 +169,13 @@ const LogChart = () => {
             }}
             value={displayRange}
           />
-          <div className="font-sans text-sm text-slate-400">
+          <div className="font-sans text-sm text-slate-500">
             Time range:{" "}
-            <span className="text-slate-950 font-semibold">
+            <span className="text-slate-950 dark:text-slate-50 font-semibold">
               {allData[displayRange[0]]?.["UTC Time"] ?? "?"}
             </span>{" "}
             -{" "}
-            <span className="text-slate-950 font-semibold">
+            <span className="text-slate-950 dark:text-slate-50 font-semibold">
               {allData[displayRange[1]]?.["UTC Time"] ?? "?"}
             </span>
           </div>
@@ -216,44 +216,44 @@ const LogChart = () => {
           <div className="w-full h-full max-w-full overflow-x-scroll">
             <div className="flex items-center gap-2 h-full pb-4 min-w-full w-fit justify-center">
               <Card className="h-full flex flex-col justify-center gap-1 items-center w-48">
-                <h4 className="text-slate-400 font-sans">Maximum</h4>
-                <p className="text-slate-950 font-mono font-semibold text-4xl">
+                <h4 className="text-slate-500 font-sans">Maximum</h4>
+                <p className="text-slate-950 dark:text-slate-50 font-mono font-semibold text-4xl">
                   {categoryMax}
                 </p>
               </Card>
               <Card className="h-full flex flex-col justify-center gap-1 items-center w-48">
-                <h4 className="text-slate-400 font-sans">Minimum</h4>
-                <p className="text-slate-950 font-mono font-semibold text-4xl">
+                <h4 className="text-slate-500 font-sans">Minimum</h4>
+                <p className="text-slate-950 dark:text-slate-50 font-mono font-semibold text-4xl">
                   {categoryMin}
                 </p>
               </Card>
               <Card className="h-full flex flex-col justify-center gap-1 items-center w-48">
-                <h4 className="text-slate-400 font-sans">Mean</h4>
-                <p className="text-slate-950 font-mono font-semibold text-4xl">
+                <h4 className="text-slate-500 font-sans">Mean</h4>
+                <p className="text-slate-950 dark:text-slate-50 font-mono font-semibold text-4xl">
                   {categoryMean}
                 </p>
               </Card>
               <Card className="h-full flex flex-col justify-center gap-1 items-center w-48">
-                <h4 className="text-slate-400 font-sans">Median</h4>
-                <p className="text-slate-950 font-mono font-semibold text-4xl">
+                <h4 className="text-slate-500 font-sans">Median</h4>
+                <p className="text-slate-950 dark:text-slate-50 font-mono font-semibold text-4xl">
                   {categoryMedian}
                 </p>
               </Card>
               <Card className="h-full flex flex-col justify-center gap-1 items-center w-48">
-                <h4 className="text-slate-400 font-sans">Mode</h4>
-                <p className="text-slate-950 font-mono font-semibold text-4xl">
+                <h4 className="text-slate-500 font-sans">Mode</h4>
+                <p className="text-slate-950 dark:text-slate-50 font-mono font-semibold text-4xl">
                   {categoryMode}
                 </p>
               </Card>
               <Card className="h-full flex flex-col justify-center gap-1 items-center w-48">
-                <h4 className="text-slate-400 font-sans">Peak-to-peak</h4>
-                <p className="text-slate-950 font-mono font-semibold text-4xl">
+                <h4 className="text-slate-500 font-sans">Peak-to-peak</h4>
+                <p className="text-slate-950 dark:text-slate-50 font-mono font-semibold text-4xl">
                   {Number(Math.abs(categoryMax - categoryMin).toFixed(3))}
                 </p>
               </Card>
               <Card className="h-full flex flex-col justify-center gap-1 items-center w-48">
-                <h4 className="text-slate-400 font-sans">Total entries</h4>
-                <p className="text-slate-950 font-mono font-semibold text-4xl">
+                <h4 className="text-slate-500 font-sans">Total entries</h4>
+                <p className="text-slate-950 dark:text-slate-50 font-mono font-semibold text-4xl">
                   {entriesNumber}
                 </p>
               </Card>

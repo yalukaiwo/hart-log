@@ -14,6 +14,7 @@ import {
 import { isNumber } from "@/lib/utils";
 import L, { LatLng } from "leaflet";
 import useDisplayDataStore from "@/lib/store/DisplayDataStore";
+import { useTheme } from "next-themes";
 
 export function findClosestPoint(
   clickedLatLng: LatLng,
@@ -52,6 +53,8 @@ const TrackMap = () => {
 
   const markerOn = useDisplayDataStore((state) => state.markerOn);
   const setMarkerOn = useDisplayDataStore((state) => state.setMarkerOn);
+
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     if (!markerOn && markerPosition) {
@@ -157,6 +160,8 @@ const TrackMap = () => {
     });
   }, [gpsData, gpsSelectedParam, setMarkerOn]);
 
+  console.log(resolvedTheme);
+
   return (
     <div className="w-full h-full relative">
       <MapContainer
@@ -164,7 +169,9 @@ const TrackMap = () => {
         zoom={15}
         className="h-full w-full z-0"
       >
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+        <TileLayer
+          url={"https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"}
+        />
         {segments}
         {markerPosition && <Marker position={markerPosition} />}
       </MapContainer>

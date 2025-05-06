@@ -10,3 +10,4 @@ export * from "./Toast";
 export * from "./Toaster";
 export * from "./Slider";
 export * from "./Card";
+export * from "./ThemeProvider";

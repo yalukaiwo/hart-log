@@ -45,7 +45,7 @@ export default function Home() {
   }
 
   return (
-    <div className="h-full grid grid-rows-[auto_1fr] text-slate-950 max-h-screen">
+    <div className="h-full grid grid-rows-[auto_1fr] text-slate-950 max-h-screen dark:text-slate-50">
       <Header />
       <main className="flex gap-4">
         <div className="min-w-96 max-w-96 grid grid-rows-[auto_1fr_250px]">
@@ -83,7 +83,7 @@ export default function Home() {
             {isValidGps ? (
               <TrackMap />
             ) : (
-              <div className="bg-slate-100 font-mono text-sm h-full w-full flex items-center justify-center">
+              <div className="bg-slate-100 dark:bg-slate-900 font-mono text-sm h-full w-full flex items-center justify-center">
                 GPS data invalid or unavailable
               </div>
             )}

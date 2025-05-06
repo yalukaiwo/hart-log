@@ -15,11 +15,11 @@ const DataSelectItem = ({
   return (
     <Label
       htmlFor={id}
-      className="font-sans text-sm cursor-pointer px-4 py-3 flex items-center justify-between relative hover:bg-slate-100 bg-opacity-20"
+      className="font-sans text-sm cursor-pointer px-4 py-3 flex items-center justify-between relative hover:bg-slate-100 dark:hover:bg-slate-900 bg-opacity-20"
     >
       <Checkbox onCheckedChange={checkChangeHandler} id={id} />
       {label}
-      <span className="absolute content-none bottom-0 left-0 w-full h-[1px] bg-slate-400 opacity-20"></span>
+      <span className="absolute content-none bottom-0 left-0 w-full h-[1px] bg-slate-400 dark:bg-slate-600 opacity-20"></span>
     </Label>
   );
 };

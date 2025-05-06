@@ -37,9 +37,7 @@ const FileInput = ({
         ref={fileRef}
         onChange={handleChange}
       />
-      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-500 font-sans">
-        {note}
-      </p>
+      <p className="mt-0.5 text-xs text-slate-500  font-sans">{note}</p>
     </div>
   );
 };

@@ -46,7 +46,7 @@ const DataSelect = () => {
 
   return (
     <div className="mt-1.5 overflow-y-scroll max-h-[calc(100vh-480px)]">
-      <h5 className="px-4 text-sm font-mono font-semibold text-slate-400">
+      <h5 className="px-4 text-sm font-mono font-semibold text-slate-500">
         ECU
       </h5>
       <div className="mt-0.5">
@@ -64,12 +64,12 @@ const DataSelect = () => {
               />
             ))
         ) : (
-          <div className="font-mono text-sm w-full text-center mt-1.5 text-slate-700">
+          <div className="font-mono text-sm w-full text-center mt-1.5 text-slate-700 dark:text-slate-200">
             File empty or unimported
           </div>
         )}
       </div>
-      <h5 className="px-4 mt-2 text-sm font-mono font-semibold text-slate-400">
+      <h5 className="px-4 mt-2 text-sm font-mono font-semibold text-slate-500">
         GPS
       </h5>
       <div className="mt-1.5">
@@ -87,7 +87,7 @@ const DataSelect = () => {
               />
             ))
         ) : (
-          <div className="font-mono text-sm w-full text-center mt-1.5 mb-4 text-slate-700">
+          <div className="font-mono text-sm w-full text-center mt-1.5 mb-4 text-slate-700 dark:text-slate-200">
             {gpsKeys.length > 0 ? "File processed" : "File empty or unimported"}
           </div>
         )}
