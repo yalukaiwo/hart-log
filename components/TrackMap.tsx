@@ -14,7 +14,6 @@ import {
 import { isNumber } from "@/lib/utils";
 import L, { LatLng } from "leaflet";
 import useDisplayDataStore from "@/lib/store/DisplayDataStore";
-import { useTheme } from "next-themes";
 
 export function findClosestPoint(
   clickedLatLng: LatLng,
