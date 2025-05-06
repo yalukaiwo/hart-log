@@ -89,7 +89,7 @@ export default function Home() {
             )}
           </div>
         </div>
-        <div className="h-full w-full p-4 box-border grid grid-rows-[1fr_200px]">
+        <div className="h-full w-full p-4 box-border grid grid-rows-[1fr_250px]">
           <LogChart />
         </div>
       </main>

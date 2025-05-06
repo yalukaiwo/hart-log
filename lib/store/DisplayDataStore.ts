@@ -6,11 +6,16 @@ export interface IDisplayDataStore {
   selectedLog: (keyof ILogData)[];
   allSelected: string[];
 
+  markerOn: (Omit<IGpsData, "UTC Time"> & { "UTC Time": string }) | null;
+
   addGps(data: keyof IGpsData): void;
   removeGps(data: keyof IGpsData): void;
   addLog(data: keyof ILogData): void;
   removeLog(data: keyof ILogData): void;
   clearSelection(): void;
+  setMarkerOn(
+    data: (Omit<IGpsData, "UTC Time"> & { "UTC Time": string }) | null
+  ): void;
 }
 
 function handleAddGps(
@@ -66,6 +71,8 @@ const useDisplayDataStore = create<IDisplayDataStore>((set) => ({
   selectedLog: [],
   allSelected: [],
 
+  markerOn: null,
+
   addGps: (data) => {
     set((prev) => handleAddGps(prev, data));
   },
@@ -80,6 +87,11 @@ const useDisplayDataStore = create<IDisplayDataStore>((set) => ({
   },
   clearSelection: () => {
     set(() => ({ selectedGPS: [], selectedLog: [], allSelected: [] }));
+  },
+  setMarkerOn: (data) => {
+    set(() => ({
+      markerOn: data,
+    }));
   },
 }));
 

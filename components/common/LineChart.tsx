@@ -498,6 +498,8 @@ interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   legendPosition?: "left" | "center" | "right";
   tooltipCallback?: (tooltipCallbackContent: TooltipProps) => void;
   customTooltip?: React.ComponentType<TooltipProps>;
+  highlightedCategory?: string;
+  highlightedDot?: { dataKey: string; index: number };
 }
 
 const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
@@ -530,6 +532,8 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
       legendPosition = "right",
       tooltipCallback,
       customTooltip,
+      highlightedCategory,
+      highlightedDot,
       ...other
     } = props;
     const CustomTooltip = customTooltip;
@@ -548,6 +552,31 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
     const hasOnValueChange = !!onValueChange;
     const prevActiveRef = React.useRef<boolean | undefined>(undefined);
     const prevLabelRef = React.useRef<string | undefined>(undefined);
+
+    React.useEffect(() => {
+      if (
+        highlightedCategory &&
+        activeLegend !== highlightedCategory &&
+        highlightedCategory !== activeDot?.dataKey
+      ) {
+        setActiveLegend(highlightedCategory);
+        setActiveDot(undefined);
+      }
+    }, [activeDot?.dataKey, activeLegend, highlightedCategory]);
+
+    React.useEffect(() => {
+      if (
+        highlightedDot &&
+        highlightedDot.index !==
+          (activeDot?.index || highlightedDot.dataKey !== activeDot?.dataKey)
+      ) {
+        setActiveDot(highlightedDot);
+        setActiveLegend(highlightedDot.dataKey);
+      }
+      if (!highlightedDot && activeDot) {
+        setActiveDot(undefined);
+      }
+    }, [activeDot, activeDot?.dataKey, activeDot?.index, highlightedDot]);
 
     function onDotClick(itemData: any, event: React.MouseEvent) {
       event.stopPropagation();
@@ -572,6 +601,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
         onValueChange?.({
           eventType: "dot",
           categoryClicked: itemData.dataKey,
+          index: itemData.index,
           ...itemData.payload,
         });
       }
