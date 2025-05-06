@@ -160,8 +160,6 @@ const TrackMap = () => {
     });
   }, [gpsData, gpsSelectedParam, setMarkerOn]);
 
-  console.log(resolvedTheme);
-
   return (
     <div className="w-full h-full relative">
       <MapContainer

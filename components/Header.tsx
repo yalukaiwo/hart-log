@@ -34,7 +34,7 @@ const Header = () => {
             }
           }}
         >
-          <div className="rounded-md h-7 w-7 flex items-center justify-center hover:dark:bg-slate-800 hover:bg-slate-100 cursor-pointer">
+          <div className="rounded-md h-7 w-7 flex items-center justify-center hover:dark:bg-slate-800 hover:bg-slate-200 cursor-pointer">
             {resolvedTheme === "dark" ? (
               <RiSunFill className="h-5 w-5" />
             ) : (

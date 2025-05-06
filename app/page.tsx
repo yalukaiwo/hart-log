@@ -35,7 +35,7 @@ export default function Home() {
 
   if (width < 1200 || height < 650) {
     return (
-      <div className="w-screen text-center flex-col h-screen font-mono text-3xl flex items-center justify-center font-bold">
+      <div className="text-slate-950 dark:text-slate-50 w-screen text-center flex-col h-screen font-mono text-3xl flex items-center justify-center font-bold">
         Screen too small
         <p className="text-center text-xl font-sans font-normal mt-5">
           To use the telemetry visualizer select a bigger device

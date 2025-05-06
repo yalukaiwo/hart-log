@@ -44,14 +44,15 @@ function formatData(
     allData = logData.map((item, index) => ({
       ...convertFlatValuesToNumbers(item),
       ...convertFlatValuesToNumbers(gpsData[index] ?? {}),
-      "UTC Time":
-        gpsData[index]["UTC Time"].toString().slice(0, 2) +
-        ":" +
-        gpsData[index]["UTC Time"].toString().slice(2, 4) +
-        ":" +
-        gpsData[index]["UTC Time"].toString().slice(4, 6) +
-        "." +
-        gpsData[index]["UTC Time"].toString().slice(7, 10),
+      "UTC Time": gpsData[index]
+        ? gpsData[index]["UTC Time"].toString().slice(0, 2) +
+          ":" +
+          gpsData[index]["UTC Time"].toString().slice(2, 4) +
+          ":" +
+          gpsData[index]["UTC Time"].toString().slice(4, 6) +
+          "." +
+          gpsData[index]["UTC Time"].toString().slice(7, 10)
+        : "",
     }));
   } else {
     allData = gpsData.map((item, index) => ({

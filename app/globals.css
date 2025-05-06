@@ -30,7 +30,6 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-slate-500) transparent;
-  transition: background-color 0.3s, color 0.3s;
 }
 
 @theme {
