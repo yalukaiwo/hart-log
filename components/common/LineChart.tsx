@@ -29,6 +29,7 @@ import {
 } from "@/lib/chartUtils";
 import { useOnWindowResize } from "@/lib/hooks/useOnWindowResize";
 import { cx } from "@/lib/utils";
+import { IGpsData, ILogData } from "@/lib/store/LogGpsStore";
 
 //#region Legend
 
@@ -501,6 +502,10 @@ interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   highlightedCategory?: string;
   highlightedDot?: { dataKey: string; index: number };
   setSelectedCategory: (value: SetStateAction<string | null>) => void;
+  allData: (ILogData &
+    IGpsData & {
+      "UTC Time": string;
+    })[];
 }
 
 const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
@@ -536,6 +541,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
       highlightedCategory,
       highlightedDot,
       setSelectedCategory,
+      allData,
       ...other
     } = props;
     const CustomTooltip = customTooltip;
@@ -748,16 +754,20 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
               position={{ y: 0 }}
               content={({ active, payload, label }) => {
                 const cleanPayload: TooltipProps["payload"] = payload
-                  ? payload.map((item: any) => ({
-                      category: item.dataKey,
-                      value: item.value,
-                      index: item.payload[index],
-                      color: categoryColors.get(
-                        item.dataKey
-                      ) as AvailableChartColorsKeys,
-                      type: item.type,
-                      payload: item.payload,
-                    }))
+                  ? payload.map((item: any) => {
+                      return {
+                        category: item.dataKey,
+                        value: Number(
+                          allData[item.payload.itemIndex][item.dataKey]
+                        ),
+                        index: item.payload[index],
+                        color: categoryColors.get(
+                          item.dataKey
+                        ) as AvailableChartColorsKeys,
+                        type: item.type,
+                        payload: item.payload,
+                      };
+                    })
                   : [];
 
                 if (

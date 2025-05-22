@@ -1,6 +1,53 @@
 import { create } from "zustand";
 import { convertFlatValuesToNumbers } from "../utils";
 
+function scaleAllFields(
+  data: (ILogData & IGpsData & { "UTC Time": string })[],
+  excludedKeys = ["UTC Time", "Latitude", "Longitude", "itemIndex"]
+): (ILogData & IGpsData & { "UTC Time": string })[] {
+  const numericKeys = Object.keys(data[0]).filter(
+    (key) =>
+      !excludedKeys.includes(key) &&
+      data.some((obj) => typeof obj[key] === "number" && !isNaN(obj[key]))
+  );
+
+  const allKeys = [...excludedKeys, ...numericKeys];
+
+  // Get min and max for each numeric key
+  const minMax = {};
+  for (const key of numericKeys) {
+    const values = data
+      .map((d) => d[key])
+      .filter((v) => typeof v === "number" && !isNaN(v));
+    const min = Math.min(...(values as number[]));
+    const max = Math.max(...(values as number[]));
+    minMax[key] = { min, max };
+  }
+
+  // Scale each data entry
+  const scaledData = data.map((obj) => {
+    const newObj = {};
+    for (const key of allKeys) {
+      const value = obj[key];
+      if (excludedKeys.includes(key)) {
+        newObj[key] = value;
+      } else {
+        const { min, max } = minMax[key];
+        if (typeof value === "number" && !isNaN(value)) {
+          if (min === max) {
+            newObj[key] = 0; // avoid divide-by-zero
+          } else {
+            newObj[key] = ((value - min) / (max - min)) * 1000;
+          }
+        }
+      }
+    }
+    return newObj;
+  });
+
+  return scaledData as (ILogData & IGpsData & { "UTC Time": string })[];
+}
+
 export interface ILogGpsStore {
   logFilename: string | undefined;
   logData: ILogData[];
@@ -11,6 +58,7 @@ export interface ILogGpsStore {
   gpsKeys: (keyof IGpsData)[];
 
   allData: (ILogData & IGpsData & { "UTC Time": string })[];
+  allDataScaled: (ILogData & IGpsData & { "UTC Time": string })[];
 
   updateLogFilename: (filename: ILogGpsStore["logFilename"]) => void;
   updateLogData: (data: ILogGpsStore["logData"]) => void;
@@ -21,6 +69,7 @@ export interface ILogGpsStore {
   updateGpsKeys: (data: ILogGpsStore["gpsKeys"]) => void;
 
   formatData: () => void;
+  scaleData: () => void;
 
   clearData: () => void;
 }
@@ -38,7 +87,7 @@ export interface IGpsData extends ILogData {
 function formatData(
   logData: ILogData[],
   gpsData: IGpsData[]
-): (ILogData & IGpsData & { "UTC Time": string })[] {
+): (ILogData & IGpsData & { "UTC Time": string; itemIndex: number })[] {
   const allData: { [index: string]: string | number }[] = gpsData.map(
     (item, index) => ({
       ...convertFlatValuesToNumbers(item),
@@ -52,10 +101,12 @@ function formatData(
           "." +
           item["UTC Time"].toString().slice(7, 10)
         : "N/A Time",
+      itemIndex: index,
     })
   );
 
-  return allData as (ILogData & IGpsData & { "UTC Time": string })[];
+  return allData as (ILogData &
+    IGpsData & { "UTC Time": string; itemIndex: number })[];
 }
 
 const useLogStore = create<ILogGpsStore>((set) => ({
@@ -68,6 +119,7 @@ const useLogStore = create<ILogGpsStore>((set) => ({
   gpsKeys: [],
 
   allData: [],
+  allDataScaled: [],
 
   updateLogFilename: (newFilename) => {
     set(() => ({
@@ -114,6 +166,11 @@ const useLogStore = create<ILogGpsStore>((set) => ({
   formatData: () => {
     set((prev) => ({
       allData: formatData(prev.logData, prev.gpsData),
+    }));
+  },
+  scaleData: () => {
+    set((prev) => ({
+      allDataScaled: scaleAllFields(prev.allData),
     }));
   },
 }));

@@ -19,6 +19,7 @@ import { mean, median, mode } from "mathjs";
 const LogChart = () => {
   const allData = useLogGpsStore((state) => state.allData);
   const gpsData = useLogGpsStore((state) => state.gpsData);
+  const allDataScaled = useLogGpsStore((state) => state.allDataScaled);
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDot, setSelectedDot] = useState<{
@@ -39,6 +40,11 @@ const LogChart = () => {
   const setMarkerOn = useDisplayDataStore((state) => state.setMarkerOn);
 
   const allSelected = useDisplayDataStore((state) => state.allSelected);
+
+  const graphData = useMemo(
+    () => allDataScaled.slice(displayRange[0], displayRange[1]),
+    [allDataScaled, displayRange]
+  );
 
   const displayData = useMemo(
     () => allData.slice(displayRange[0], displayRange[1]),
@@ -122,8 +128,11 @@ const LogChart = () => {
         setSelectedCategory={setSelectedCategory}
         className="h-full font-sans"
         enableLegendSlider
-        data={displayData}
+        data={graphData}
+        allData={allData}
         tickGap={15}
+        yAxisWidth={200}
+        showYAxis={false}
         index="UTC Time"
         categories={allSelected}
         valueFormatter={(value) => value.toFixed(3).toString()}

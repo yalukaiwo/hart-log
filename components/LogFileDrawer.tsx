@@ -62,6 +62,7 @@ const LogFileDrawer = () => {
     updateGpsKeys,
     clearData,
     formatData,
+    scaleData,
   } = useLogGpsStore((state) => state);
 
   const { toast } = useToast();
@@ -192,6 +193,7 @@ const LogFileDrawer = () => {
       updateLogKeys(keysLog);
 
       formatData();
+      scaleData();
 
       setGpsFilename(undefined);
       setLogFilename(undefined);
@@ -211,6 +213,7 @@ const LogFileDrawer = () => {
       isOnlyLogFile,
       logData,
       logFilename,
+      scaleData,
       toast,
       updateGpsData,
       updateGpsFilename,
