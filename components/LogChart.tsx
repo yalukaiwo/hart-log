@@ -53,8 +53,8 @@ const LogChart = () => {
 
     const index = allData.findIndex((value) => {
       return (
-        value.Latitude === markerOn.Latitude &&
-        value.Longitude === markerOn.Longitude &&
+        Number(value.Latitude) === Number(markerOn.Latitude) &&
+        Number(value.Longitude) === Number(markerOn.Longitude) &&
         value["UTC Time"] === markerOn["UTC Time"]
       );
     });
@@ -119,6 +119,7 @@ const LogChart = () => {
   return (
     <>
       <LineChart
+        setSelectedCategory={setSelectedCategory}
         className="h-full font-sans"
         enableLegendSlider
         data={displayData}
@@ -135,15 +136,15 @@ const LogChart = () => {
           }
 
           if (value.eventType === "dot") {
-            setSelectedCategory(value.categoryClicked);
-            setSelectedDot({
-              dataKey: value.categoryClicked,
-              index: value!.index as number,
-            });
             setMarkerOn({
               Latitude: value!.Latitude as number,
               Longitude: value!.Longitude as number,
               "UTC Time": value["UTC Time"] as string,
+            });
+            setSelectedCategory(value.categoryClicked);
+            setSelectedDot({
+              dataKey: value.categoryClicked,
+              index: value!.index as number,
             });
           } else {
             setMarkerOn(null);

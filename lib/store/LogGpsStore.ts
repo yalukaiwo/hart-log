@@ -39,35 +39,22 @@ function formatData(
   logData: ILogData[],
   gpsData: IGpsData[]
 ): (ILogData & IGpsData & { "UTC Time": string })[] {
-  let allData: { [index: string]: string | number }[];
-  if (logData.length > gpsData.length) {
-    allData = logData.map((item, index) => ({
-      ...convertFlatValuesToNumbers(item),
-      ...convertFlatValuesToNumbers(gpsData[index] ?? {}),
-      "UTC Time": gpsData[index]
-        ? gpsData[index]["UTC Time"].toString().slice(0, 2) +
-          ":" +
-          gpsData[index]["UTC Time"].toString().slice(2, 4) +
-          ":" +
-          gpsData[index]["UTC Time"].toString().slice(4, 6) +
-          "." +
-          gpsData[index]["UTC Time"].toString().slice(7, 10)
-        : "",
-    }));
-  } else {
-    allData = gpsData.map((item, index) => ({
+  const allData: { [index: string]: string | number }[] = gpsData.map(
+    (item, index) => ({
       ...convertFlatValuesToNumbers(item),
       ...convertFlatValuesToNumbers(logData[index] ?? {}),
-      "UTC Time":
-        item["UTC Time"].toString().slice(0, 2) +
-        ":" +
-        item["UTC Time"].toString().slice(2, 4) +
-        ":" +
-        item["UTC Time"].toString().slice(4, 6) +
-        "." +
-        item["UTC Time"].toString().slice(7, 10),
-    }));
-  }
+      "UTC Time": Number(gpsData[index]["UTC Time"] > 0)
+        ? item["UTC Time"].toString().slice(0, 2) +
+          ":" +
+          item["UTC Time"].toString().slice(2, 4) +
+          ":" +
+          item["UTC Time"].toString().slice(4, 6) +
+          "." +
+          item["UTC Time"].toString().slice(7, 10)
+        : "N/A Time",
+    })
+  );
+
   return allData as (ILogData & IGpsData & { "UTC Time": string })[];
 }
 

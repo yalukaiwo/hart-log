@@ -37,6 +37,7 @@ export function findClosestPoint(
 
 const TrackMap = () => {
   const gpsData = useLogGpsStore((state) => state.gpsData);
+
   const gpsKeys = useLogGpsStore((state) => state.gpsKeys).filter(
     (item) =>
       !["UTC Time", "Longitude", "Latitude"].includes(item.toString()) &&
@@ -87,13 +88,21 @@ const TrackMap = () => {
     []
   );
 
+  const filteredGpsData = useMemo(
+    () =>
+      gpsData.filter((item) => {
+        return Number(item.Latitude) !== 0 && Number(item.Longitude) != 0;
+      }),
+    [gpsData]
+  );
+
   const segments = useMemo(() => {
-    if (!gpsData.length) return [];
+    if (!filteredGpsData.length) return [];
 
     let colorScale = chroma.scale(["darkblue"]);
 
     if (gpsSelectedParam && gpsData[0][gpsSelectedParam]) {
-      const dataVals: number[] = gpsData.map((item) => {
+      const dataVals: number[] = filteredGpsData.map((item) => {
         if (!item[gpsSelectedParam]) return 0;
         return Number(item[gpsSelectedParam]);
       });
@@ -106,8 +115,8 @@ const TrackMap = () => {
         .domain([minV, maxV]);
     }
 
-    return gpsData.slice(1).map((point, i) => {
-      const prev = gpsData[i];
+    return filteredGpsData.slice(1).map((point, i) => {
+      const prev = filteredGpsData[i];
       const color = colorScale(
         gpsSelectedParam && point[gpsSelectedParam]
           ? Number(point[gpsSelectedParam])
@@ -155,44 +164,54 @@ const TrackMap = () => {
         />
       );
     });
-  }, [gpsData, gpsSelectedParam, setMarkerOn]);
+  }, [filteredGpsData, gpsData, gpsSelectedParam, setMarkerOn]);
 
   return (
-    <div className="w-full h-full relative">
-      <MapContainer
-        center={[gpsData[0].Latitude, gpsData[0].Longitude]}
-        zoom={15}
-        className="h-full w-full z-0"
-      >
-        <TileLayer
-          url={"https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"}
-        />
-        {segments}
-        {markerPosition && <Marker position={markerPosition} />}
-      </MapContainer>
-      {gpsKeys.length > 0 ? (
-        <div className="absolute top-2.5 right-2.5 z-50">
-          <Select onValueChange={handleSelectChange}>
-            <SelectTrigger className="mx-auto font-sans">
-              <SelectValue placeholder="Select" className="font-sans" />
-            </SelectTrigger>
-            <SelectContent className="font-sans">
-              {gpsKeys.map((item) => (
-                <SelectItem
-                  className="font-sans"
-                  key={item.toString()}
-                  value={item.toString()}
-                >
-                  {item.toString()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <>
+      {filteredGpsData.length > 0 ? (
+        <div className="w-full h-full relative">
+          <MapContainer
+            center={[filteredGpsData[0].Latitude, filteredGpsData[0].Longitude]}
+            zoom={15}
+            className="h-full w-full z-0"
+          >
+            <TileLayer
+              url={
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              }
+            />
+            {segments}
+            {markerPosition && <Marker position={markerPosition} />}
+          </MapContainer>
+          {gpsKeys.length > 0 ? (
+            <div className="absolute top-2.5 right-2.5 z-50">
+              <Select onValueChange={handleSelectChange}>
+                <SelectTrigger className="mx-auto font-sans">
+                  <SelectValue placeholder="Select" className="font-sans" />
+                </SelectTrigger>
+                <SelectContent className="font-sans">
+                  {gpsKeys.map((item) => (
+                    <SelectItem
+                      className="font-sans"
+                      key={item.toString()}
+                      value={item.toString()}
+                    >
+                      {item.toString()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       ) : (
-        <></>
+        <div className="bg-slate-100 dark:bg-slate-900 font-mono text-sm h-full w-full flex items-center justify-center">
+          GPS data invalid or unavailable
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -9,12 +9,6 @@ export const chartColors = {
     fill: "fill-lime-500",
     text: "text-lime-500",
   },
-  gray: {
-    bg: "bg-gray-500",
-    stroke: "stroke-gray-500",
-    fill: "fill-gray-500",
-    text: "text-gray-500",
-  },
   emerald: {
     bg: "bg-emerald-500",
     stroke: "stroke-emerald-500",
@@ -81,12 +75,6 @@ export const chartColors = {
     fill: "fill-teal-500",
     text: "text-teal-500",
   },
-  neutral: {
-    bg: "bg-neutral-500",
-    stroke: "stroke-neutral-500",
-    fill: "fill-neutral-500",
-    text: "text-neutral-500",
-  },
   red: {
     bg: "bg-red-500",
     stroke: "stroke-red-500",
@@ -105,35 +93,17 @@ export const chartColors = {
     fill: "fill-yellow-500",
     text: "text-yellow-500",
   },
-  stone: {
-    bg: "bg-stone-500",
-    stroke: "stroke-stone-500",
-    fill: "fill-stone-500",
-    text: "text-stone-500",
-  },
   amber: {
     bg: "bg-amber-500",
     stroke: "stroke-amber-500",
     fill: "fill-amber-500",
     text: "text-amber-500",
   },
-  slate: {
-    bg: "bg-slate-500",
-    stroke: "stroke-slate-500",
-    fill: "fill-slate-500",
-    text: "text-slate-500",
-  },
   green: {
     bg: "bg-green-500",
     stroke: "stroke-green-500",
     fill: "fill-green-500",
     text: "text-green-500",
-  },
-  zinc: {
-    bg: "bg-zinc-500",
-    stroke: "stroke-zinc-500",
-    fill: "fill-zinc-500",
-    text: "text-zinc-500",
   },
 } as const satisfies {
   [color: string]: {

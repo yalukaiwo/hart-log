@@ -3,7 +3,7 @@
 
 "use client";
 
-import React from "react";
+import React, { SetStateAction } from "react";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import {
   CartesianGrid,
@@ -393,7 +393,7 @@ const ChartTooltip = ({
       <div
         className={cx(
           // base
-          "rounded-md border text-sm shadow-md",
+          "rounded-md border text-sm shadow-md z-50",
           // border color
           "border-slate-200 dark:border-slate-800",
           // background color
@@ -500,6 +500,7 @@ interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   customTooltip?: React.ComponentType<TooltipProps>;
   highlightedCategory?: string;
   highlightedDot?: { dataKey: string; index: number };
+  setSelectedCategory: (value: SetStateAction<string | null>) => void;
 }
 
 const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
@@ -534,6 +535,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
       customTooltip,
       highlightedCategory,
       highlightedDot,
+      setSelectedCategory,
       ...other
     } = props;
     const CustomTooltip = customTooltip;
@@ -565,18 +567,29 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
     }, [activeDot?.dataKey, activeLegend, highlightedCategory]);
 
     React.useEffect(() => {
-      if (
-        highlightedDot &&
-        highlightedDot.index !==
-          (activeDot?.index || highlightedDot.dataKey !== activeDot?.dataKey)
-      ) {
-        setActiveDot(highlightedDot);
-        setActiveLegend(highlightedDot.dataKey);
+      if (highlightedDot && highlightedDot.index !== activeDot?.index) {
+        setActiveDot({
+          index: highlightedDot.index,
+          dataKey: activeDot?.dataKey || activeLegend || highlightedDot.dataKey,
+        });
+        setActiveLegend(
+          activeDot?.dataKey || activeLegend || highlightedDot.dataKey
+        );
+        setSelectedCategory(
+          activeDot?.dataKey || activeLegend || highlightedDot.dataKey
+        );
       }
       if (!highlightedDot && activeDot) {
         setActiveDot(undefined);
       }
-    }, [activeDot, activeDot?.dataKey, activeDot?.index, highlightedDot]);
+    }, [
+      activeDot,
+      activeDot?.dataKey,
+      activeDot?.index,
+      activeLegend,
+      highlightedDot,
+      setSelectedCategory,
+    ]);
 
     function onDotClick(itemData: any, event: React.MouseEvent) {
       event.stopPropagation();
